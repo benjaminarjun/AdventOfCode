@@ -3,7 +3,7 @@ import unittest
 from lib import get_required_fuel_amt_from_mass
 
 
-class TestPart1(unittest.TestCase):
+class TestRequiredFuelDerivations(unittest.TestCase):
     @parameterized.expand([
         ["12", 12, 2],
         ["14", 14, 2],
@@ -12,6 +12,9 @@ class TestPart1(unittest.TestCase):
     ])
     def test_required_fuel_amt_from_mass(self, name, mass, expected_fuel):
         self.assertEqual(get_required_fuel_amt_from_mass(mass), expected_fuel)
+
+    def test_negligible_mass_requires_0_fuel(self):
+        self.assertEqual(get_required_fuel_amt_from_mass(1), 0)
 
 
 if __name__ == '__main__':

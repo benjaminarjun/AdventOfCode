@@ -3,7 +3,7 @@ import math
 
 def get_required_fuel_amt_from_mass(mass):
     """Given the mass of an object, return the amount of fuel needed."""
-    return math.floor(mass / 3) - 2
+    return max(math.floor(mass / 3) - 2, 0)
 
 
 def get_total_fuel_requirement(masses):
