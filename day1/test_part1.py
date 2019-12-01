@@ -1,6 +1,6 @@
 from parameterized import parameterized
 import unittest
-from part1 import get_required_fuel_amt_from_mass
+from lib import get_required_fuel_amt_from_mass
 
 
 class TestPart1(unittest.TestCase):
