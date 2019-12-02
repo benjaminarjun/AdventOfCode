@@ -1,12 +1,14 @@
 """Problem URL: https://adventofcode.com/2019/day/1"""
 
 
+import os
 from lib import get_total_fuel_requirement
 
 
 def _get_input_from_file():
     try:
-        with open('input.txt', 'r') as f:
+        # TODD: make this relative to the script location so this can be run from anywhere
+        with open(os.path.join('..', '..', 'data', 'day1_input.txt'), 'r') as f:
             input = [int(line.strip()) for line in f.readlines()]
     except FileNotFoundError as f:
         raise Exception('Could not find file with input masses. Check working directory.', f)
