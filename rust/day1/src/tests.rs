@@ -1,9 +1,6 @@
-use crate::lib::get_required_fuel_amt_from_mass;
-
-
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::lib::get_required_fuel_amt_from_mass;
 
     // Not accounting for extra weight of fuel
     #[test]
