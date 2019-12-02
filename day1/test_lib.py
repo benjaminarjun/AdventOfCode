@@ -16,6 +16,14 @@ class TestRequiredFuelDerivations(unittest.TestCase):
     def test_negligible_mass_requires_0_fuel(self):
         self.assertEqual(get_required_fuel_amt_from_mass(1), 0)
 
+    @parameterized.expand([
+        ["14", 14, 2],
+        ["1969", 1969, 966],
+        ["100756", 100756, 50346],
+    ])
+    def test_required_fuel_amt_from_mass_with_recurs(self, name, mass, expected_fuel):
+        self.assertEqual(get_required_fuel_amt_from_mass(mass, recurse=True), expected_fuel)
+
 
 if __name__ == '__main__':
     unittest.main()
