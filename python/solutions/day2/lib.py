@@ -1,4 +1,12 @@
-gclass IntCodeComputer:
+class IntCodeComputer:
+    """Class to run an intcode program.
+
+    Parameters
+    ----------
+    program_str : str
+        Comma-delimited string representation of the program.
+    """
+
     def __init__(self, program_str):
         if program_str is None or len(program_str) == 0:
             raise ValueError('Program cannot be None or empty.')
