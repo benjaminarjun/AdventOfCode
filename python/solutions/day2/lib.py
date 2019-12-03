@@ -12,7 +12,6 @@ class IntCodeComputer:
             raise ValueError('Program cannot be None or empty.')
 
         self.program = [int(item) for item in program_str.split(',')]
-        print(self.program)
         self._index = 0
 
     def run(self):
@@ -38,3 +37,10 @@ class IntCodeComputer:
             raise ValueError('Op code must be one of: { 1, 2, 99 }')
 
         self.program[target_ix] = combined_val
+
+
+class IntCodeComputerTroubleshooter(IntCodeComputer):
+    """Extension of IntCodeComputer, allowing for program state manipulation to troubleshoot execution errors."""
+
+    def replace(self, index, value):
+        self.program[index] = value

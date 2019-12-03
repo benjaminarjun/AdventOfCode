@@ -1,10 +1,9 @@
 from parameterized import parameterized
 import unittest
-from .lib import IntCodeComputer
+from .lib import IntCodeComputer, IntCodeComputerTroubleshooter
 
 
 class TestIntCodeComputer(unittest.TestCase):
-
     @parameterized.expand([
         ['1,9,10,3,2,3,11,0,99,30,40,50', '3500,9,10,70,2,3,11,0,99,30,40,50'],
         ['1,0,0,0,99', '2,0,0,0,99'],
@@ -15,3 +14,14 @@ class TestIntCodeComputer(unittest.TestCase):
     def test_example(self, input, expected):
         computer = IntCodeComputer(input)
         self.assertEqual(computer.run(), expected)
+
+
+class TestIntCodeComputerTroubleshooter(unittest.TestCase):
+    def test_replacer(self):
+        input = '1,2,3,3,99'
+
+        computer = IntCodeComputerTroubleshooter(input)
+        computer.replace(2, 1)
+
+        expected = [1, 2, 1, 3, 99]
+        self.assertEqual(computer.program, expected)
