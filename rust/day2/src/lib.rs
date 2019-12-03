@@ -81,9 +81,9 @@ impl IntCodeComputer {
 // Definition of all possible int code ops. There's probably a better way to do this.
 fn get_op_by_id(id: u32) -> IntCodeOp {
     match id {
-        1 => IntCodeOp { id: 1, segment_length: 4, op_action: OpAction::Add },
-        2 => IntCodeOp { id: 2, segment_length: 4, op_action: OpAction::Multiply },
-        99 => IntCodeOp { id: 99, segment_length: 1, op_action: OpAction::Terminate },
+        1 => IntCodeOp { segment_length: 4, op_action: OpAction::Add },
+        2 => IntCodeOp { segment_length: 4, op_action: OpAction::Multiply },
+        99 => IntCodeOp { segment_length: 1, op_action: OpAction::Terminate },
         _ => panic!("Received an invalid op ID; must be one of { 1, 2, 99 }")
     }
 }
@@ -97,7 +97,6 @@ enum OpAction {
 
 
 struct IntCodeOp {
-    id: u32,
     segment_length: u32,
     op_action: OpAction,
 }
@@ -106,15 +105,15 @@ struct IntCodeOp {
 pub fn find_noun_and_verb_resulting_in(target_output: u32, program: &Vec<u32>) -> Option<(u32, u32)> {
     let cartesian = (0..100).cartesian_product(0..100);
 
-    let noun: u32;
-    let verb: u32;
-    for (noun, verb) in cartesian {
+    let _noun: u32;
+    let _verb: u32;
+    for (_noun, _verb) in cartesian {
         let mut computer = IntCodeComputer::new(program)    ;
-        computer.change_noun(noun);
-        computer.change_verb(verb);
+        computer.change_noun(_noun);
+        computer.change_verb(_verb);
 
         if computer.get_result() == target_output {
-            return Option::Some((noun, verb));
+            return Option::Some((_noun, _verb));
         }
     }
 
