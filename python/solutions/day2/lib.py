@@ -41,6 +41,5 @@ class IntCodeComputer:
 
 class IntCodeComputerTroubleshooter(IntCodeComputer):
     """Extension of IntCodeComputer, allowing for program state manipulation to troubleshoot execution errors."""
-
     def replace(self, index, value):
         self.program[index] = value
