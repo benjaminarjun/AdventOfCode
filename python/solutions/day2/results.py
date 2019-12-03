@@ -1,4 +1,4 @@
-"""Problem URL: https://adventofcode.com/2019/day/2"""
+"""Problem URL: https://adventofcode.com/2019/day/2g"""
 
 
 from ..aoc_helpers import get_data_file
@@ -30,4 +30,4 @@ if __name__ == '__main__':
     part_2_noun, part_2_verb = find_noun_and_verb_resulting_in(19690720, program)
 
     print(f"Part 1:  {part_1_computer.program[0]}")
-    print(f"Part 1:  {100 * part_2_noun + part_2_verb}")
+    print(f"Part 2:  {100 * part_2_noun + part_2_verb}")
