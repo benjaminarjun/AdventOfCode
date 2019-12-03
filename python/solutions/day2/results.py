@@ -2,7 +2,7 @@
 
 
 from ..aoc_helpers import get_data_file
-from .lib import IntCodeComputerTroubleshooter
+from .lib import find_noun_and_verb_resulting_in, IntCodeComputerTroubleshooter
 
 
 # TODO: See what the data looks like for future days; may be able to generalize this function and add to module.
@@ -17,12 +17,17 @@ def _get_input_from_file():
 
 
 if __name__ == '__main__':
-    input = _get_input_from_file()
+    program = _get_input_from_file()
 
-    computer = IntCodeComputerTroubleshooter(input)
-    computer.replace(1, 12)
-    computer.replace(2, 2)
+    # Part 1
+    part_1_computer = IntCodeComputerTroubleshooter(program)
+    part_1_computer.replace(1, 12)
+    part_1_computer.replace(2, 2)
 
-    computer.run()
+    part_1_computer.run()
 
-    print(f"Part 1:  {computer.program[0]}")
+    # Part 2
+    part_2_noun, part_2_verb = find_noun_and_verb_resulting_in(19690720, program)
+
+    print(f"Part 1:  {part_1_computer.program[0]}")
+    print(f"Part 1:  {100 * part_2_noun + part_2_verb}")

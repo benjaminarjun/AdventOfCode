@@ -1,3 +1,6 @@
+import itertools
+
+
 class IntCodeComputer:
     """Class to run an intcode program.
 
@@ -53,3 +56,32 @@ class IntCodeComputerTroubleshooter(IntCodeComputer):
             The value to place at the specified index"""
 
         self.program[index] = value
+
+
+def find_noun_and_verb_resulting_in(target_output, program):
+    """Find a noun and verb that result in the specified output for the given program.
+
+    If a solution exists, the first solution encountered will be returned as a tuple.
+    Otherwise, None is returned.
+
+    Parameters
+    ----------
+    target_output : int
+        The desired output value
+    program : str
+        Comma-delimited string representation of the program"""
+
+    found_solution = False
+
+    for noun, verb in itertools.product(range(100), range(100)):
+        computer = IntCodeComputerTroubleshooter(program)
+        computer.replace(1, noun)
+        computer.replace(2, verb)
+
+        computer.run()
+
+        if computer.program[0] == target_output:
+            found_solution = True
+            break
+
+    return found_solution and (noun, verb) or None
