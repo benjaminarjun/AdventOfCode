@@ -62,6 +62,16 @@ impl IntCodeComputer {
             },
         }
     }
+
+    pub fn change_noun(&mut self, new_val: u32) {
+        self.program[1] = new_val;
+        self._working_program[1] = new_val;
+    }
+
+    pub fn change_verb(&mut self, new_val: u32) {
+        self.program[2] = new_val;
+        self._working_program[2] = new_val;
+    }
 }
 
 
