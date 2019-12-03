@@ -15,6 +15,7 @@ class IntCodeComputer:
         self._index = 0
 
     def run(self):
+        """Run the intcode program and return resulting program as a comma-delimited string."""
         while not self._index_at_terminate():
             op_segment = self.program[self._index: self._index + 4]
             self._perform_op(*op_segment)
