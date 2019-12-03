@@ -1,3 +1,6 @@
+use itertools::Itertools;
+
+
 pub struct IntCodeComputer {
     pub program: Vec<u32>,
     _result: Option<u32>,
@@ -6,7 +9,7 @@ pub struct IntCodeComputer {
 }
 
 impl IntCodeComputer {
-    pub fn new(program: Vec<u32>) -> Self {
+    pub fn new(program: &Vec<u32>) -> Self {
         IntCodeComputer {
             program: program.clone(),
             _result: Option::None,
@@ -97,4 +100,23 @@ struct IntCodeOp {
     id: u32,
     segment_length: u32,
     op_action: OpAction,
+}
+
+
+pub fn find_noun_and_verb_resulting_in(target_output: u32, program: &Vec<u32>) -> Option<(u32, u32)> {
+    let cartesian = (0..100).cartesian_product(0..100);
+
+    let noun: u32;
+    let verb: u32;
+    for (noun, verb) in cartesian {
+        let mut computer = IntCodeComputer::new(program)    ;
+        computer.change_noun(noun);
+        computer.change_verb(verb);
+
+        if computer.get_result() == target_output {
+            return Option::Some((noun, verb));
+        }
+    }
+
+    Option::None
 }
