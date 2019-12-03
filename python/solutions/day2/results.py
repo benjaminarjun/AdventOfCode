@@ -1,4 +1,4 @@
-"""Problem URL: https://adventofcode.com/2019/day/1"""
+"""Problem URL: https://adventofcode.com/2019/day/2"""
 
 
 from ..aoc_helpers import get_data_file
