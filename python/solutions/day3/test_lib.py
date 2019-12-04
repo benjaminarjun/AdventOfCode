@@ -1,5 +1,6 @@
 import unittest
-from .lib import get_closest_shared_point_traversed, manhattan_distance
+from .lib import (get_closest_shared_point_traversed,
+    get_shared_point_w_min_signal_delay, manhattan_distance)
 
 
 class TestManhattanDistance(unittest.TestCase):

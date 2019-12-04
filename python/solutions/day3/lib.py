@@ -36,7 +36,7 @@ def _get_points_traversed(path):
     return retval
 
 
-def get_closest_shared_point_traversed(path_1, path_2):
+def _get_closest_shared_point_traversed(path_1, path_2, stop_at_closest):
     path_1_points = _get_points_traversed(path_1)
     path_2_points = _get_points_traversed(path_2)
 
@@ -51,11 +51,18 @@ def get_closest_shared_point_traversed(path_1, path_2):
 
         if len(intersection) == 1:
             # list conversion + indexing is fine because we know there's only one thing.
-            return list(intersection)[0]
+            shared_points.append(list(intersection)[0])
+            if stop_at_closest:
+                return shared_points
         elif len(intersection) > 1:
             raise ValueError('Found multiple path intersections of least distance to origin; expected one.')
 
-    return None
+    return any(shared_points) and shared_points or None
+
+
+def get_closest_shared_point_traversed(path_1, path_2):
+    closest = _get_closest_shared_point_traversed(path_1, path_2, True)
+    return closest is None and closest or closest[0]
 
 
 class WireSegment:
