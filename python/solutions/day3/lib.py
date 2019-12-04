@@ -8,8 +8,10 @@ def manhattan_distance(location_tuple):
 
 def _get_points_traversed(path):
     retval = defaultdict(set)
+    i = 0
     current_position = (0, 0)
-    retval[0].add(current_position)
+
+    retval[0].add(WireSegment(i, current_position))
 
     for action in path.split(','):
         # Parse action description and apply.
@@ -26,9 +28,10 @@ def _get_points_traversed(path):
             raise ValueError('Direction must be one of { "U", "D", "L", "R" }')
 
         for _ in range(num_steps):
+            i += 1
             current_position = tuple(map(sum, zip(current_position, new_step)))
             distance = manhattan_distance(current_position)
-            retval[distance].add(current_position)
+            retval[distance].add(WireSegment(i, current_position))
 
     return retval
 
@@ -39,8 +42,12 @@ def get_closest_shared_point_traversed(path_1, path_2):
 
     shared_distances = set(path_1_points).intersection(set(path_2_points)).difference({0})
 
-    for distance in shared_distances :
-        intersection = path_1_points[distance].intersection(path_2_points[distance])
+    shared_points = []
+    for distance in shared_distances:
+        this_distance_path_1_points = set([segment.location for segment in path_1_points[distance]])
+        this_distance_path_2_points = set([segment.location for segment in path_2_points[distance]])
+
+        intersection = this_distance_path_1_points.intersection(this_distance_path_2_points)
 
         if len(intersection) == 1:
             # list conversion + indexing is fine because we know there's only one thing.
@@ -49,3 +56,9 @@ def get_closest_shared_point_traversed(path_1, path_2):
             raise ValueError('Found multiple path intersections of least distance to origin; expected one.')
 
     return None
+
+
+class WireSegment:
+    def __init__(self, step_num, location):
+        self.step_num = step_num
+        self.location = location
