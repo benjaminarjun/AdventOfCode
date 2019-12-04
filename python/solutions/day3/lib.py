@@ -7,11 +7,11 @@ def manhattan_distance(location_tuple):
 
 
 def _get_points_traversed(path):
-    retval = defaultdict(set)
+    retval = defaultdict(list)
     i = 0
     current_position = (0, 0)
 
-    retval[0].add(WireSegment(i, current_position))
+    retval[0].append(WireSegment(i, current_position))
 
     for action in path.split(','):
         # Parse action description and apply.
@@ -31,12 +31,15 @@ def _get_points_traversed(path):
             i += 1
             current_position = tuple(map(sum, zip(current_position, new_step)))
             distance = manhattan_distance(current_position)
-            retval[distance].add(WireSegment(i, current_position))
+            retval[distance].append(WireSegment(i, current_position))
 
     return retval
 
 
-def _get_closest_shared_point_traversed(path_1, path_2, stop_at_closest):
+def _get_nearest_point(path_1, path_2, strategy):
+    if strategy not in ['closest', 'shortest']:
+        raise ValueError('strategy must be one of { "closest", "shortest" }')
+
     path_1_points = _get_points_traversed(path_1)
     path_2_points = _get_points_traversed(path_2)
 
@@ -52,17 +55,37 @@ def _get_closest_shared_point_traversed(path_1, path_2, stop_at_closest):
         if len(intersection) == 1:
             # list conversion + indexing is fine because we know there's only one thing.
             shared_points.append(list(intersection)[0])
-            if stop_at_closest:
-                return shared_points
+            if strategy == 'closest':
+                return shared_points[0]
         elif len(intersection) > 1:
             raise ValueError('Found multiple path intersections of least distance to origin; expected one.')
 
-    return any(shared_points) and shared_points or None
+    if strategy == 'shortest':
+        shared_point_path_lengths = {}
+
+        for shared_point in set(shared_points):
+            distance = manhattan_distance(shared_point)
+
+            path_1_matching_points = list(filter(lambda x: x.location == shared_point, path_1_points[distance]))
+            path_2_matching_points = list(filter(lambda x: x.location == shared_point, path_2_points[distance]))
+
+            shared_point_path_lengths[shared_point] = path_1_matching_points[0].step_num\
+                + path_1_matching_points[0].step_num
+
+        return min(shared_point_path_lengths, key=shared_point_path_lengths.get)
+
+    # Possible to get here if the paths don't intersect; return None in that case.
+    return None
 
 
 def get_closest_shared_point_traversed(path_1, path_2):
-    closest = _get_closest_shared_point_traversed(path_1, path_2, True)
-    return closest is None and closest or closest[0]
+    nearest = _get_nearest_point(path_1, path_2, strategy='closest')
+    return nearest
+
+
+def get_shared_point_w_min_signal_delay(path_1, path_2):
+    nearest = _get_nearest_point(path_1, path_2, strategy='shortest')
+    return nearest
 
 
 class WireSegment:
