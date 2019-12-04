@@ -51,3 +51,17 @@ class TestGetClosestSharedPointTraversed(unittest.TestCase):
 
         closest_point = get_closest_shared_point_traversed(path_1, path_2)
         self.assertEqual(manhattan_distance(closest_point), 135)
+
+
+class TestGetSharedPointWithMinSignalDelay(unittest.TestCase):
+    def test_example_1(self):
+        path_1 = '75,D30,R83,U83,L12,D49,R71,U7,L72'
+        path_2 = 'U62,R66,U55,R34,D71,R55,D58,R83'
+
+        self.assertEqual(get_shared_point_w_min_signal_delay(path_1, path_2), 610)
+
+    def test_example_2(self):
+        path_1 = 'R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51'
+        path_2 = 'U98,R91,D20,R16,D67,R40,U7,R15,U6,R7'
+
+        self.assertEqual(get_shared_point_w_min_signal_delay(path_1, path_2), 410)
