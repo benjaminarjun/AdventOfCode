@@ -65,6 +65,10 @@ def get_closest_shared_point_traversed(path_1, path_2):
     return closest is None and closest or closest[0]
 
 
+def get_shared_point_w_min_signal_delay(path_1, path_2):
+    pass
+
+
 class WireSegment:
     def __init__(self, step_num, location):
         self.step_num = step_num
