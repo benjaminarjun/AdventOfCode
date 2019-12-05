@@ -25,3 +25,9 @@ class TestIsCandidateWithoutMultipleMatches(unittest.TestCase):
 
     def test_example_3(self):
         self.assertTrue(_is_candidate(111122, False, enforce_puzzle_input_range=False))
+
+    # cooking up new cases now to troubleshoot
+    def test_misc_addl_cases(self):
+        self.assertFalse(_is_candidate(111111, False, enforce_puzzle_input_range=False))
+        self.assertTrue(_is_candidate(112222, False, enforce_puzzle_input_range=False))
+        self.assertTrue(_is_candidate(122333, False, enforce_puzzle_input_range=False))
