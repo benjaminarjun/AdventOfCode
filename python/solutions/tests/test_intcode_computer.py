@@ -1,6 +1,6 @@
 from parameterized import parameterized
 import unittest
-from ..intcode_computer import find_noun_and_verb_resulting_in, IntCodeComputer, IntCodeComputerTroubleshooter
+from ..intcode_computer.core import find_noun_and_verb_resulting_in, IntCodeComputer, IntCodeComputerTroubleshooter
 
 
 class TestIntCodeComputer(unittest.TestCase):
