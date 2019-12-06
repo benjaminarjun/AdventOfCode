@@ -33,4 +33,4 @@ K)L
 K)YOU
 I)SAN"""
 
-        self.assertEqual(count_orbit_transfers(input, 'YOU', 'SAN'), 4)
+        self.assertEqual(count_orbit_transfers(input, 'K', 'I'), 4)
