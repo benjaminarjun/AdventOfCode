@@ -20,3 +20,7 @@ def count_orbits(orbit_def):
         total_orbits += orbits_this_obj
 
     return total_orbits
+
+
+def count_orbit_transfers(orbit_def, initial_orbited, desired_orbited):
+    pass
