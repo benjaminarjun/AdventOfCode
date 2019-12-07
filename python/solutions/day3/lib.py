@@ -36,7 +36,24 @@ def _get_points_traversed(path):
     return retval
 
 
-def _get_nearest_point(path_1, path_2, strategy):
+def get_nearest_shared_point(path_1, path_2, strategy='closest'):
+    """Get nearest-to-origin intersection of two paths, with a configurable definition of `nearest`.
+
+    Given two (x, y) lists representing paths from the origin, find the point nearest to the origin
+    that both paths pass through. Nearest may minimize either the Manhattan distance from the point
+    to the origin, or the total amount of wire required (i.e., sum of the minimum index in each list
+    whose location matches the shared point).
+
+    Parameters
+    ----------
+    path_1 : list<(int, int)>
+        Represents a wire path starting at the origin and traversing each point in sequence
+    path_2 : list<(int, int)>
+        Represents a wire path starting at the origin and traversing each point in sequence
+    strategy : str
+        The metric to minimize in determining "nearest" (detailed explanation above).
+        Supported values { 'closest', 'shortest' }; default 'closest'
+    """
     if strategy not in ['closest', 'shortest']:
         raise ValueError('strategy must be one of { "closest", "shortest" }')
 
@@ -79,20 +96,16 @@ def _get_nearest_point(path_1, path_2, strategy):
 
 
 def get_closest_shared_point_traversed(path_1, path_2):
-    nearest = _get_nearest_point(path_1, path_2, strategy='closest')
+    nearest = get_nearest_point(path_1, path_2, strategy='closest')
     return nearest
 
 
 def get_shared_point_w_min_signal_delay(path_1, path_2):
-    nearest = _get_nearest_point(path_1, path_2, strategy='shortest')
+    nearest = get_nearest_point(path_1, path_2, strategy='shortest')
     return nearest
 
 
-def get_shared_point_w_min_signal_delay(path_1, path_2):
-    pass
-
-
-class WireSegment:
+class WirePathPoint:
     def __init__(self, step_num, location):
         self.step_num = step_num
         self.location = location
