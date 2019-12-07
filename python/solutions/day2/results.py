@@ -2,7 +2,7 @@
 
 
 from ..aoc_helpers import get_data_file
-from .lib import find_noun_and_verb_resulting_in, IntCodeComputerTroubleshooter
+from ..intcode_computer import find_noun_and_verb_resulting_in, IntCodeComputerTroubleshooter
 
 
 # TODO: See what the data looks like for future days; may be able to generalize this function and add to module.

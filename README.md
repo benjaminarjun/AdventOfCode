@@ -20,8 +20,7 @@ execute `python -m solutions.day{N}.results` from the Python root.
 
 ### Running tests
 
-This project uses `unittest`. Run tests with `python -m unittest solutions.day{N}.test_lib` (this will likely change in the
-near future).
+This project uses `unittest`. Run tests with `python -m unittest` from the Python root to run all tests. To run tests for a specific day, run `python -m unittest solutions.day{N}.test_lib`.
 
 ## Rust
 
