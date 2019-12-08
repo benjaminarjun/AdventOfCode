@@ -4,8 +4,8 @@ class OrbitGroup:
         self._build_orbit_lookup(orbits)
 
     @classmethod
-    def from_str(cls, input):
-        orbits = [line.strip().split(')') for line in input.splitlines()]
+    def from_str(cls, input_str):
+        orbits = [line.strip().split(')') for line in input_str.splitlines()]
         return cls(orbits)
 
     def count_total_orbits(self):

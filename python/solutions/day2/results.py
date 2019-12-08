@@ -9,11 +9,11 @@ from ..intcode_computer import find_noun_and_verb_resulting_in, IntCodeComputerT
 def _get_input_from_file():
     try:
         with open(get_data_file('day2_input.txt'), 'r') as f:
-            input = f.read()
+            input_data = f.read()
     except FileNotFoundError as f:
         raise Exception('Could not find file with intcode program.', f)
 
-    return input
+    return input_data
 
 
 if __name__ == '__main__':
