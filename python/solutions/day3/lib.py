@@ -11,7 +11,7 @@ def _get_points_traversed(path):
     i = 0
     current_position = (0, 0)
 
-    retval[0].append(WireSegment(i, current_position))
+    retval[0].append(WirePathPoint(i, current_position))
 
     for action in path.split(','):
         # Parse action description and apply.
@@ -31,7 +31,7 @@ def _get_points_traversed(path):
             i += 1
             current_position = tuple(map(sum, zip(current_position, new_step)))
             distance = manhattan_distance(current_position)
-            retval[distance].append(WireSegment(i, current_position))
+            retval[distance].append(WirePathPoint(i, current_position))
 
     return retval
 
@@ -96,12 +96,12 @@ def get_nearest_shared_point(path_1, path_2, strategy='closest'):
 
 
 def get_closest_shared_point_traversed(path_1, path_2):
-    nearest = get_nearest_point(path_1, path_2, strategy='closest')
+    nearest = get_nearest_shared_point(path_1, path_2, strategy='closest')
     return nearest
 
 
 def get_shared_point_w_min_signal_delay(path_1, path_2):
-    nearest = get_nearest_point(path_1, path_2, strategy='shortest')
+    nearest = get_nearest_shared_point(path_1, path_2, strategy='shortest')
     return nearest
 
 
