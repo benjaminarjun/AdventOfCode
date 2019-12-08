@@ -11,14 +11,3 @@ def decode(encoded_image, width, height):
     layers = np.array(int_list).reshape(num_layers, height, width)
     
     return layers
-
-    # layers = []
-
-    # for i in range(len(encoded_image) / (width * height)):
-    #     this_layer = [list()]
-    #     layers.append
-
-
-
-
-
