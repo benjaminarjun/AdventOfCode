@@ -1,4 +1,4 @@
-from .lib import decode
+from .lib import decode, get_layers, print_bw_image
 from ..aoc_helpers import get_data_file
 
 
@@ -16,12 +16,17 @@ if __name__ == '__main__':
     width = 25
     length = 6
 
-    image = decode(input_data, width, length)
+    layers = get_layers(input_data, width, length)
 
-    num_zeros_per_layer = [(layer == 0).sum() for layer in image]
-    layer_of_interest = image[num_zeros_per_layer.index(min(num_zeros_per_layer))]
+    num_zeros_per_layer = [(layer == 0).sum() for layer in layers]
+    layer_of_interest = layers[num_zeros_per_layer.index(min(num_zeros_per_layer))]
 
     num_1s_in_layer_of_interest = (layer_of_interest == 1).sum()
     num_2s_in_layer_of_interest = (layer_of_interest == 2).sum()
 
     print(f'Part 1:  {num_1s_in_layer_of_interest * num_2s_in_layer_of_interest}')
+
+    image = decode(layers)
+
+    print('Part 2:')
+    print_bw_image(image)
