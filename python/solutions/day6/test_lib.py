@@ -1,5 +1,5 @@
 import unittest
-from .lib import count_orbits, count_orbit_transfers
+from .lib import OrbitGroup
 
 
 class TestOrbitCounter(unittest.TestCase):
@@ -16,10 +16,11 @@ E)J
 J)K
 K)L"""
 
-        self.assertEqual(count_orbits(orbit_def), 42)
+        orbit_group = OrbitGroup.from_str(orbit_def)
+        self.assertEqual(orbit_group.count_total_orbits(), 42)
 
     def test_orbit_traversal_counter(self):
-        input = """COM)B
+        orbit_def = """COM)B
 B)C
 C)D
 D)E
@@ -33,4 +34,5 @@ K)L
 K)YOU
 I)SAN"""
 
-        self.assertEqual(count_orbit_transfers(input, 'K', 'I'), 4)
+        orbit_group = OrbitGroup.from_str(orbit_def)
+        self.assertEqual(orbit_group.count_orbit_transfers('K', 'I'), 4)
