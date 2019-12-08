@@ -8,11 +8,11 @@ from ..aoc_helpers import get_data_file
 def _get_input_from_file():
     try:
         with open(get_data_file('day1_input.txt'), 'r') as f:
-            input = [int(line.strip()) for line in f.readlines()]
+            input_data = [int(line.strip()) for line in f.readlines()]
     except FileNotFoundError as f:
         raise Exception('Could not find file with input masses. Check working directory.', f)
 
-    return input
+    return input_data
 
 
 if __name__ == '__main__':

@@ -5,30 +5,30 @@ from .lib import (get_closest_shared_point_traversed,
 
 class TestManhattanDistance(unittest.TestCase):
     def test_trivial_case(self):
-        input = (0, 0)
-        self.assertEqual(manhattan_distance(input), 0)
+        point = (0, 0)
+        self.assertEqual(manhattan_distance(point), 0)
 
     def test_positives(self):
-        input = (5, 3)
-        self.assertEqual(manhattan_distance(input), 8)
+        point = (5, 3)
+        self.assertEqual(manhattan_distance(point), 8)
 
     def test_negatives(self):
-        input = (-5, -3)
-        self.assertEqual(manhattan_distance(input), 8)
+        point = (-5, -3)
+        self.assertEqual(manhattan_distance(point), 8)
 
     def test_mix(self):
-        input = (5, -3)
+        point = (5, -3)
         negated_input = (-5, 3)
-        self.assertEqual(manhattan_distance(input), 8)
+        self.assertEqual(manhattan_distance(point), 8)
         self.assertEqual(manhattan_distance(negated_input), 8)
 
     def test_1d(self):
-        input = (-2, )
-        self.assertEqual(manhattan_distance(input), 2)
+        point = (-2, )
+        self.assertEqual(manhattan_distance(point), 2)
 
     def test_many_dimensional(self):
-        input = (1, -2, 3, -4, 5, -6, 7, -8, 9)
-        self.assertEqual(manhattan_distance(input), 45)
+        point = (1, -2, 3, -4, 5, -6, 7, -8, 9)
+        self.assertEqual(manhattan_distance(point), 45)
 
 
 class TestGetClosestSharedPointTraversed(unittest.TestCase):

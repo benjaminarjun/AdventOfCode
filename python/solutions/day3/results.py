@@ -8,11 +8,11 @@ from .lib import get_closest_shared_point_traversed, manhattan_distance
 def _get_input_from_file():
     try:
         with open(get_data_file('day3_input.txt'), 'r') as f:
-            input = f.readlines()
+            input_data = f.readlines()
     except FileNotFoundError as f:
         raise Exception('Could not find file.', f)
 
-    return input
+    return input_data
 
 
 if __name__ == '__main__':

@@ -3,6 +3,11 @@ class OrbitGroup:
         self.orbits = orbits
         self._build_orbit_lookup(orbits)
 
+    @classmethod
+    def from_str(cls, input_str):
+        orbits = [line.strip().split(')') for line in input_str.splitlines()]
+        return cls(orbits)
+
     def count_total_orbits(self):
         total_orbits = 0
         for orbiting_object in self.orbit_lookup:
