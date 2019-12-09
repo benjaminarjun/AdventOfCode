@@ -36,27 +36,7 @@ def _get_points_traversed(path):
     return retval
 
 
-def get_nearest_shared_point(path_1, path_2, strategy='closest'):
-    """Get nearest-to-origin intersection of two paths, with a configurable definition of `nearest`.
-
-    Given two (x, y) lists representing paths from the origin, find the point nearest to the origin
-    that both paths pass through. Nearest may minimize either the Manhattan distance from the point
-    to the origin, or the total amount of wire required (i.e., sum of the minimum index in each list
-    whose location matches the shared point).
-
-    Parameters
-    ----------
-    path_1 : list<(int, int)>
-        Represents a wire path starting at the origin and traversing each point in sequence
-    path_2 : list<(int, int)>
-        Represents a wire path starting at the origin and traversing each point in sequence
-    strategy : str
-        The metric to minimize in determining "nearest" (detailed explanation above).
-        Supported values { 'closest', 'shortest' }; default 'closest'
-    """
-    if strategy not in ['closest', 'shortest']:
-        raise ValueError('strategy must be one of { "closest", "shortest" }')
-
+def get_shared_points(path_1, path_2, stop_at_closest):
     path_1_points = _get_points_traversed(path_1)
     path_2_points = _get_points_traversed(path_2)
 
@@ -69,43 +49,47 @@ def get_nearest_shared_point(path_1, path_2, strategy='closest'):
 
         intersection = this_distance_path_1_points.intersection(this_distance_path_2_points)
 
-        if len(intersection) == 1:
+        if len(intersection) > 0:
             # list conversion + indexing is fine because we know there's only one thing.
             shared_points.append(list(intersection)[0])
-            if strategy == 'closest':
-                return shared_points[0]
-        elif len(intersection) > 1:
-            raise ValueError('Found multiple path intersections of least distance to origin; expected one.')
+            if stop_at_closest:
+                if len(intersection) > 1:
+                    raise ValueError('Found multiple path intersections of least distance to origin; expected one.')
+                else:
+                    return shared_points
 
-    if strategy == 'shortest':
-        shared_point_path_lengths = {}
-
-        for shared_point in set(shared_points):
-            distance = manhattan_distance(shared_point)
-
-            path_1_matching_points = list(filter(lambda x: x.location == shared_point, path_1_points[distance]))
-            path_2_matching_points = list(filter(lambda x: x.location == shared_point, path_2_points[distance]))
-
-            shared_point_path_lengths[shared_point] = path_1_matching_points[0].step_num\
-                + path_1_matching_points[0].step_num
-
-        return min(shared_point_path_lengths, key=shared_point_path_lengths.get)
-
-    # Possible to get here if the paths don't intersect; return None in that case.
-    return None
+    return shared_points
 
 
-def get_closest_shared_point_traversed(path_1, path_2):
-    nearest = get_nearest_shared_point(path_1, path_2, strategy='closest')
+def get_closest_shared_point(path_1, path_2):
+    nearest = get_shared_points(path_1, path_2, stop_at_closest=True)[0]
     return nearest
 
 
-def get_shared_point_w_min_signal_delay(path_1, path_2):
-    nearest = get_nearest_shared_point(path_1, path_2, strategy='shortest')
-    return nearest
+def get_min_signal_delay(path_1, path_2):
+    path_1_points = _get_points_traversed(path_1)
+    path_2_points = _get_points_traversed(path_2)
+    shared_points = get_shared_points(path_1, path_2, stop_at_closest=False)
+
+    min_total_wire_length = None
+    for point in shared_points:
+        distance_from_origin = manhattan_distance(point)
+
+        path_1_point = next(a for a in path_1_points[distance_from_origin] if a.location == point)
+        path_2_point = next(a for a in path_2_points[distance_from_origin] if a.location == point)
+
+        total_wire_length = path_1_point.step_num + path_2_point.step_num
+
+        if min_total_wire_length is None or total_wire_length < min_total_wire_length:
+            min_total_wire_length = total_wire_length
+
+    return min_total_wire_length
 
 
 class WirePathPoint:
     def __init__(self, step_num, location):
         self.step_num = step_num
         self.location = location
+
+    def __repr__(self):
+        return f'<WirePathPoint(step_num={self.step_num}, location={self.location})>'
