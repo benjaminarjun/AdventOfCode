@@ -1,6 +1,6 @@
 from parameterized import parameterized
 import unittest
-from ..intcode_computer.core import find_noun_and_verb_resulting_in, IntCodeComputer, IntCodeComputerTroubleshooter
+from ..intcode_computer.core import find_noun_and_verb_resulting_in, IntCodeComputer
 
 
 class TestIntCodeComputer(unittest.TestCase):
@@ -14,17 +14,6 @@ class TestIntCodeComputer(unittest.TestCase):
     def test_example(self, program, expected):
         computer = IntCodeComputer.from_str(program)
         self.assertEqual(computer.run(), expected)
-
-
-class TestIntCodeComputerTroubleshooter(unittest.TestCase):
-    def test_replacer(self):
-        program = '1,2,3,3,99'
-
-        computer = IntCodeComputerTroubleshooter.from_str(program)
-        computer.replace(2, 1)
-
-        expected = [1, 2, 1, 3, 99]
-        self.assertEqual(computer.program, expected)
 
 
 class TestNounVerbSolver(unittest.TestCase):

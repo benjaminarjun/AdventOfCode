@@ -57,21 +57,6 @@ class IntCodeComputer:
         self.program[target_ix] = combined_val
 
 
-class IntCodeComputerTroubleshooter(IntCodeComputer):
-    """Extension of IntCodeComputer, allowing for program state manipulation to troubleshoot execution errors."""
-    def replace(self, index, value):
-        """Replace a particular value in the program.
-
-        Parameters
-        ----------
-        index : int
-            The index of the program to replace
-        value : int
-            The value to place at the specified index"""
-
-        self.program[index] = value
-
-
 def find_noun_and_verb_resulting_in(target_output, program):
     """Find a noun and verb that result in the specified output for the given program.
 
@@ -88,9 +73,8 @@ def find_noun_and_verb_resulting_in(target_output, program):
     found_solution = False
 
     for noun, verb in itertools.product(range(100), range(100)):
-        computer = IntCodeComputerTroubleshooter.from_str(program)
-        computer.replace(1, noun)
-        computer.replace(2, verb)
+        computer = IntCodeComputer.from_str(program)
+        computer.program[1:3] = noun, verb
 
         computer.run()
 
