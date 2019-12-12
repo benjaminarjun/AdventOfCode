@@ -12,7 +12,7 @@ class TestIntCodeComputer(unittest.TestCase):
         ['1,1,1,4,99,5,6,0,99', '30,1,1,4,2,5,6,0,99'],
     ])
     def test_example(self, program, expected):
-        computer = IntCodeComputer(program)
+        computer = IntCodeComputer.from_str(program)
         self.assertEqual(computer.run(), expected)
 
 
@@ -20,7 +20,7 @@ class TestIntCodeComputerTroubleshooter(unittest.TestCase):
     def test_replacer(self):
         program = '1,2,3,3,99'
 
-        computer = IntCodeComputerTroubleshooter(program)
+        computer = IntCodeComputerTroubleshooter.from_str(program)
         computer.replace(2, 1)
 
         expected = [1, 2, 1, 3, 99]

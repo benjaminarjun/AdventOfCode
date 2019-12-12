@@ -6,16 +6,30 @@ class IntCodeComputer:
 
     Parameters
     ----------
-    program_str : str
-        Comma-delimited string representation of the program.
+    program_str : list<int>
+        List of ints representing an intcode program.
     """
 
-    def __init__(self, program_str):
+    def __init__(self, program_list):
+        if len(program_list) == 0:
+            raise ValueError('Program list must contain at least 1 value.')
+
+        self.program = program_list
+        self._index = 0
+
+    @classmethod
+    def from_str(cls, program_str):
+        """Class to run an intcode program.
+
+        Parameters
+        ----------
+        program_str : list<int>
+            Comma-delimited string representation of the program.
+        """
         if program_str is None or len(program_str) == 0:
             raise ValueError('Program cannot be None or empty.')
 
-        self.program = [int(item) for item in program_str.split(',')]
-        self._index = 0
+        return cls([int(item) for item in program_str.split(',')])
 
     def run(self):
         """Run the intcode program and return resulting program as a comma-delimited string."""
@@ -74,7 +88,7 @@ def find_noun_and_verb_resulting_in(target_output, program):
     found_solution = False
 
     for noun, verb in itertools.product(range(100), range(100)):
-        computer = IntCodeComputerTroubleshooter(program)
+        computer = IntCodeComputerTroubleshooter.from_str(program)
         computer.replace(1, noun)
         computer.replace(2, verb)
 
