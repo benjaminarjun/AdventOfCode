@@ -26,13 +26,13 @@ class SpaceObjectSystem:
         self.current_step = 0
 
     def apply_time_step(self):
-        self._apply_gravity()
-        self._apply_velocity()
-        self.current_step += 1
+        self.apply_time_steps(1)
 
     def apply_time_steps(self, num):
         for _ in range(num):
-            self.apply_time_step()
+            self._apply_gravity()
+            self._apply_velocity()
+            self.current_step += 1
 
     def get_total_energy(self):
         return sum([z.get_total_energy() for z in self.space_objects])
