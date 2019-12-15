@@ -19,6 +19,7 @@ class SpaceObject:
     def __repr__(self):
         return f'<SpaceObject(position={self.position}, velocity={self.velocity})>'
 
+
 class SpaceObjectSystem:
     def __init__(self, space_objects):
         self.space_objects = space_objects
