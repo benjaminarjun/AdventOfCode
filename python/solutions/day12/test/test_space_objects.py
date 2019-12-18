@@ -1,6 +1,7 @@
 from parameterized import parameterized
 import unittest
-from .lib import Coord, SpaceObject, SpaceObjectSystem
+from ..space_objects import Coord, find_earliest_repetition_of_system_state, SpaceObject, SpaceObjectSystem
+from copy import deepcopy
 
 
 class TestCoord(unittest.TestCase):
@@ -87,3 +88,39 @@ class TestSpaceObjectSystemExamples2(unittest.TestCase):
     def test_total_system_energy(self):
         self.system.apply_time_steps(100)
         self.assertEqual(self.system.get_total_energy(), 1940)        
+
+
+class TestEarliestSystemRepetitionFinder(unittest.TestCase):
+    def test_confirm_repetition_ex_1(self):
+        space_objects = [
+            SpaceObject(Coord((-1, 0, 2))),
+            SpaceObject(Coord((2, -10, -7))),
+            SpaceObject(Coord((4, -8, 8))),
+            SpaceObject(Coord((3, 5, -1))),
+        ]
+
+        system = SpaceObjectSystem(deepcopy(space_objects))
+        system.apply_time_steps(2772)
+
+        self.assertEqual([z.position for z in system.space_objects], [z.position for z in space_objects])
+        self.assertEqual([z.velocity for z in system.space_objects], [z.velocity for z in space_objects])
+
+    def test_find_earliest_repetition_of_system_state_ex_1(self):
+        space_objects = [
+            SpaceObject(Coord((-1, 0, 2))),
+            SpaceObject(Coord((2, -10, -7))),
+            SpaceObject(Coord((4, -8, 8))),
+            SpaceObject(Coord((3, 5, -1))),
+        ]
+
+        self.assertEqual(find_earliest_repetition_of_system_state(space_objects), 2772)
+
+    def test_find_earliest_repetition_of_system_state_ex_2(self):
+        space_objects = [
+            SpaceObject(Coord((-8, -10, 0))),
+            SpaceObject(Coord((5, 5, 10))),
+            SpaceObject(Coord((2, -7, 3))),
+            SpaceObject(Coord((9, -8, -3))),
+        ]
+
+        self.assertEqual(find_earliest_repetition_of_system_state(space_objects), 4686774924)

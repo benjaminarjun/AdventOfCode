@@ -1,5 +1,7 @@
 import collections
+import copy
 import itertools
+from .algebra import three_way_lcm
 
 
 class SpaceObject:
@@ -83,3 +85,31 @@ class Coord(tuple):
 
     def __repr__(self):
         return f'<Coord({super().__repr__()})>'
+
+
+def find_earliest_repetition_of_system_state(space_objects):
+    def _get_pos_dim(system, dimension):
+        return [obj.position[dimension] for obj in system.space_objects]
+
+    def _get_vel_dim(system, dimension):
+        return [obj.velocity[dimension] for obj in system.space_objects]
+
+    # Find out how often each set of coordinates repeats.
+    x_period, y_period, z_period = None, None, None
+    system = SpaceObjectSystem(copy.deepcopy(space_objects))
+
+    x_pos_initial, x_vel_initial = _get_pos_dim(system, 0), _get_vel_dim(system, 0)
+    y_pos_initial, y_vel_initial = _get_pos_dim(system, 1), _get_vel_dim(system, 1)
+    z_pos_initial, z_vel_initial = _get_pos_dim(system, 2), _get_vel_dim(system, 2)
+
+    while x_period is None or y_period is None or z_period is None:
+        system.apply_time_step()
+
+        if _get_pos_dim(system, 0) == x_pos_initial and _get_vel_dim(system, 0) == x_vel_initial and x_period is None:
+            x_period = system.current_step
+        if _get_pos_dim(system, 1) == y_pos_initial and _get_vel_dim(system, 1) == y_vel_initial and y_period is None:
+            y_period = system.current_step
+        if _get_pos_dim(system, 2) == z_pos_initial and _get_vel_dim(system, 2) == z_vel_initial and z_period is None:
+            z_period = system.current_step
+
+    return three_way_lcm(x_period, y_period, z_period)
