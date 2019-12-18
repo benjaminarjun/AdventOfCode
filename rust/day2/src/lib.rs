@@ -108,7 +108,7 @@ pub fn find_noun_and_verb_resulting_in(target_output: u32, program: &Vec<u32>) -
     let _noun: u32;
     let _verb: u32;
     for (_noun, _verb) in cartesian {
-        let mut computer = IntCodeComputer::new(program)    ;
+        let mut computer = IntCodeComputer::new(program);
         computer.change_noun(_noun);
         computer.change_verb(_verb);
 
