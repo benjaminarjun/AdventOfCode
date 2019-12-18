@@ -4,6 +4,16 @@ from ..intcode_computer.core import find_noun_and_verb_resulting_in, IntCodeComp
 
 
 class TestIntCodeComputer(unittest.TestCase):
+    def test_add(self):
+        computer = IntCodeComputer([1, 1, 1, 0, 99])
+        computer.run()
+        self.assertEqual(computer.program, [2, 1, 1, 0, 99])
+
+    def test_multiply(self):
+        computer = IntCodeComputer([2, 1, 3, 2, 99])
+        computer.run()
+        self.assertEqual(computer.program, [2, 1, 2, 2, 99])
+
     @parameterized.expand([
         ['1,9,10,3,2,3,11,0,99,30,40,50', '3500,9,10,70,2,3,11,0,99,30,40,50'],
         ['1,0,0,0,99', '2,0,0,0,99'],
@@ -13,7 +23,13 @@ class TestIntCodeComputer(unittest.TestCase):
     ])
     def test_example(self, program, expected):
         computer = IntCodeComputer.from_str(program)
-        self.assertEqual(computer.run(), expected)
+        computer.run()
+        self.assertEqual(IntCodeComputer.program_to_str(computer.program), expected)
+
+    def test_program_to_str(self):
+        program = [1, 2, 3, 4, 99]
+        computer = IntCodeComputer(program)
+        self.assertEqual(IntCodeComputer.program_to_str(computer.program), '1,2,3,4,99')
 
 
 class TestNounVerbSolver(unittest.TestCase):
