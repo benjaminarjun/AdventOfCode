@@ -1,25 +1,26 @@
-from abc import ABC, abstractmethod
 import itertools
 from .ops import op_lookup
 
 
-def run_intcode_program(program, debug=False):
-    if len(program) == 0:
+def run_intcode_program(program_raw, input_val=None):
+    if len(program_raw) == 0:
         raise ValueError('Program cannot be empty.')
 
-    program_list = [int(z) for z in program.split(',')]
+    program = [int(z) for z in program_raw.split(',')]
     index = 0
 
-    while program_list[index] != 99:
+    while program[index] != 99:
         # Parse op ID and parameter modes
-        instruction = program_list[index]
+        instruction = program[index]
         op, param_modes = _parse_instruction(instruction)
-        if debug: print(f'Applying {op} at index {index} with param modes {param_modes}')
-        op.perform(program_list, index, param_modes, debug)
+        
+        output_val = op.perform(program, index, param_modes, input_val)
         index += op.chunk_length
-        if debug: print(f'Working copy: {program_list}')
+        
+        # the output becomes input to the next op
+        input_val = output_val
 
-    return ','.join(map(str, program_list))
+    return (','.join(map(str, program)), output_val)
 
 
 def _parse_instruction(instruction):
@@ -63,7 +64,7 @@ def find_noun_and_verb_resulting_in(target_output, program):
         program_list[1:3] = str(noun), str(verb)
         modified_program = ','.join(program_list)
 
-        result = run_intcode_program(modified_program)
+        result, _ = run_intcode_program(modified_program)
 
         if int(result.split(',')[0]) == target_output:
             found_solution = True
