@@ -1,6 +1,6 @@
 from parameterized import parameterized
 import unittest
-from ..intcode_computer.core import find_noun_and_verb_resulting_in, run_intcode_program
+from ..intcode_computer.core import find_noun_and_verb_resulting_in, IntcodeProgramRunner
 
 
 class TestIntCodeComputer(unittest.TestCase):
@@ -8,37 +8,43 @@ class TestIntCodeComputer(unittest.TestCase):
         program = '1,1,1,0,99'
         expected = '2,1,1,0,99'
 
-        working_program, _ = run_intcode_program(program)
-        self.assertEqual(expected, working_program)
+        runner = IntcodeProgramRunner.from_str(program)
+        runner.run()
+        self.assertEqual(expected, runner.final_program_str)
 
     def test_multiply(self):
         program = '2,1,2,3,99'
         expected = '2,1,2,2,99'
 
-        working_program, _ = run_intcode_program(program)
-        self.assertEqual(expected, working_program)
+        runner = IntcodeProgramRunner.from_str(program)
+        runner.run()
+        self.assertEqual(expected, runner.final_program_str)
 
     def test_input(self):
         program = '3,0,99'
         input_val = 5
         expected = '5,0,99'
 
-        working_program, _ = run_intcode_program(program, input_val)
-        self.assertEqual(expected, working_program)
+        runner = IntcodeProgramRunner.from_str(program)
+        runner.run(input_val)
+        self.assertEqual(expected, runner.final_program_str)
 
     def test_output(self):
         program = '4,0,99'
         expected_output = 4
 
-        _, output_val = run_intcode_program(program)
-        self.assertEqual(expected_output, output_val)
+        runner = IntcodeProgramRunner.from_str(program)
+        runner.run()
+        self.assertEqual(expected_output, runner.return_code)
 
     def test_input_and_output(self):
         program = '3,0,4,0,99'
         input_val = 77
+        expected_output = input_val
 
-        _, output_val = run_intcode_program(program, input_val)
-        self.assertEqual(input_val, output_val)
+        runner = IntcodeProgramRunner.from_str(program)
+        runner.run(77)
+        self.assertEqual(expected_output, runner.return_code)
 
     @parameterized.expand([
         ['1,9,10,3,2,3,11,0,99,30,40,50', '3500,9,10,70,2,3,11,0,99,30,40,50'],
@@ -48,8 +54,9 @@ class TestIntCodeComputer(unittest.TestCase):
         ['1,1,1,4,99,5,6,0,99', '30,1,1,4,2,5,6,0,99'],
     ])
     def test_example(self, program, expected):
-        working_program, _ = run_intcode_program(program)
-        self.assertEqual(expected, working_program)
+        runner = IntcodeProgramRunner.from_str(program)
+        runner.run()
+        self.assertEqual(expected, runner.final_program_str)
 
 
 class TestNounVerbSolver(unittest.TestCase):

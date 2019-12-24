@@ -2,45 +2,62 @@ import itertools
 from .ops import op_lookup
 
 
-def run_intcode_program(program_raw, input_val=None):
-    if len(program_raw) == 0:
-        raise ValueError('Program cannot be empty.')
+class IntcodeProgramRunner:
+    def __init__(self, program_list):
+        if len(program_list) == 0:
+            raise ValueError('Program cannot be empty.')
 
-    program = [int(z) for z in program_raw.split(',')]
-    index = 0
+        self._index = 0
 
-    while program[index] != 99:
-        # Parse op ID and parameter modes
-        instruction = program[index]
-        op, param_modes = _parse_instruction(instruction)
-        
-        output_val = op.perform(program, index, param_modes, input_val)
-        index += op.chunk_length
-        
-        # the output becomes input to the next op
-        input_val = output_val
+        self.original_program = program_list.copy()
+        self._working_program = program_list.copy()
 
-    return (','.join(map(str, program)), output_val)
+        self.final_program = None
+        self.return_code = None
+    
+    @classmethod
+    def from_str(cls, program_str):
+        program = list(map(int, program_str.split(',')))
+        return cls(program)
 
+    def run(self, input_val=None):
+        while self._working_program[self._index] != 99:
+            # Parse op ID and parameter modes
+            instruction = self._working_program[self._index]
+            op, param_modes = self._parse_instruction(instruction)
+            
+            output_val = op.perform(self._working_program, self._index, param_modes, input_val)
+            self._index += op.chunk_length
+            
+            # the output becomes input to the next op
+            input_val = output_val
 
-def _parse_instruction(instruction):
-    instruction_str = str(instruction)
-    op_id = int(instruction_str[-2:])
+        self.final_program = self._working_program.copy()
+        self.return_code = output_val
+        return output_val
 
-    if op_id not in op_lookup.keys():
-        raise ValueError(
-            f'Encountered invalid op ID in program {program}. ' +
-            f'Working version of program: {program_list}, index {index}, val {op_id}. ' +
-            f'Index must be one of: {op_lookup.keys()}'
-        )
+    def _parse_instruction(self, instruction):
+        instruction_str = str(instruction)
+        op_id = int(instruction_str[-2:])
 
-    op = op_lookup[op_id]
+        if op_id not in op_lookup.keys():
+            raise ValueError(
+                f'Encountered invalid op ID in program {program}. ' +
+                f'Working version of program: {program_list}, index {self._index}, val {op_id}. ' +
+                f'Index must be one of: {op_lookup.keys()}'
+            )
 
-    param_modes = [int(mode) for mode in list(instruction_str[:-2][::-1])]
-    num_addl_modes = op.chunk_length - 1 - len(param_modes) # length of chunk minus 1 for instruction, less num supplied
-    param_modes.extend([0] * num_addl_modes)
+        op = op_lookup[op_id]
 
-    return op, param_modes
+        param_modes = [int(mode) for mode in list(instruction_str[:-2][::-1])]
+        num_addl_modes = op.chunk_length - 1 - len(param_modes) # length of chunk minus 1 for instruction, less num supplied
+        param_modes.extend([0] * num_addl_modes)
+
+        return op, param_modes
+
+    @property
+    def final_program_str(self):
+        return self.final_program and ','.join(map(str, self.final_program)) or None
 
 
 # TODO maybe does not belong in core
@@ -64,9 +81,10 @@ def find_noun_and_verb_resulting_in(target_output, program):
         program_list[1:3] = str(noun), str(verb)
         modified_program = ','.join(program_list)
 
-        result, _ = run_intcode_program(modified_program)
+        runner = IntcodeProgramRunner.from_str(modified_program)
+        runner.run()
 
-        if int(result.split(',')[0]) == target_output:
+        if int(runner.final_program[0]) == target_output:
             found_solution = True
             break
 
