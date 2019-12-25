@@ -26,7 +26,8 @@ class IntcodeProgramRunner:
             instruction = self._working_program[self._index]
             op, param_modes = self._parse_instruction(instruction)
             
-            output_val = op.perform(self._working_program, self._index, param_modes, input_val)
+            output_val = op.perform(self, param_modes, input_val)
+            #output_val = op.perform(self._working_program, self._index, param_modes, input_val)
             self._index += op.chunk_length
             
             # the output becomes input to the next op

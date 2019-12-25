@@ -5,9 +5,9 @@ class Op:
         self.takes_input = takes_input
         self._perform_func = perform_func
 
-    def perform(self, program, index, param_modes, input_val):
+    def perform(self, program_runner, param_modes, input_val):
         # Build param list and call self._perform_func
-        params = [program, index]
+        params = [program_runner]
         if self.takes_param_modes:
             params.append(param_modes)
         if self.takes_input:
@@ -19,45 +19,55 @@ class Op:
         return f'<Op(chunk_length={self.chunk_length}, perform={self.perform.__name__})>'
 
 
-def _intcode_add(program, index, param_modes):
-    lh_val_mode, rh_val_mode, _ = param_modes
+def _intcode_add(program_runner, param_modes):
+    program = program_runner._working_program
+    index = program_runner._index
 
+    lh_val_mode, rh_val_mode, _ = param_modes
     lh_val = lh_val_mode == 1 and program[index + 1] or program[program[index + 1]]
     rh_val = rh_val_mode == 1 and program[index + 2] or program[program[index + 2]]
 
     program[program[index + 3]] = lh_val + rh_val
 
 
-def _intcode_multiply(program, index, param_modes):
-    lh_val_mode, rh_val_mode, _ = param_modes
+def _intcode_multiply(program_runner, param_modes):
+    program = program_runner._working_program
+    index = program_runner._index
 
+    lh_val_mode, rh_val_mode, _ = param_modes
     lh_val = lh_val_mode == 1 and program[index + 1] or program[program[index + 1]]
     rh_val = rh_val_mode == 1 and program[index + 2] or program[program[index + 2]]
 
     program[program[index + 3]] = lh_val * rh_val
 
 
-def _intcode_input(program, index, param_modes, input_val):
+def _intcode_input(program_runner, param_modes, input_val):
+    program = program_runner._working_program
+    index = program_runner._index
+
     program[program[index + 1]] = input_val
 
 
-def _intcode_output(program, index, param_modes):
+def _intcode_output(program_runner, param_modes):
+    program = program_runner._working_program
+    index = program_runner._index
+
     return program[program[index + 1]]
 
 
-def _intcode_jump_if_true(program, index, param_modes):
+def _intcode_jump_if_true(program_runner, param_modes):
     pass
 
 
-def _intcode_jump_if_false(program, index, param_modes):
+def _intcode_jump_if_false(program_runner, param_modes):
     pass
 
 
-def _intcode_less_than(program, index, param_modes):
+def _intcode_less_than(program_runner, param_modes):
     pass
 
 
-def _intcode_equals(program, index, param_modes):
+def _intcode_equals(program_runner, param_modes):
     pass
 
 
