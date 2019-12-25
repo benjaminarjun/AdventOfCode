@@ -1,5 +1,5 @@
 import itertools
-from .ops import op_lookup
+from .ops import get_op_by_id
 
 
 class IntcodeProgramRunner:
@@ -27,7 +27,6 @@ class IntcodeProgramRunner:
             op, param_modes = self._parse_instruction(instruction)
             
             output_val = op.perform(self, param_modes, input_val)
-            #output_val = op.perform(self._working_program, self._index, param_modes, input_val)
             self._index += op.chunk_length
             
             # the output becomes input to the next op
@@ -41,14 +40,7 @@ class IntcodeProgramRunner:
         instruction_str = str(instruction)
         op_id = int(instruction_str[-2:])
 
-        if op_id not in op_lookup.keys():
-            raise ValueError(
-                f'Encountered invalid op ID in program {program}. ' +
-                f'Working version of program: {program_list}, index {self._index}, val {op_id}. ' +
-                f'Index must be one of: {op_lookup.keys()}'
-            )
-
-        op = op_lookup[op_id]
+        op = get_op_by_id(op_id)
 
         param_modes = [int(mode) for mode in list(instruction_str[:-2][::-1])]
         num_addl_modes = op.chunk_length - 1 - len(param_modes) # length of chunk minus 1 for instruction, less num supplied

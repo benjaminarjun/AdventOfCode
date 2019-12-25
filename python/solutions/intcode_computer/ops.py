@@ -77,13 +77,36 @@ def _intcode_equals(program_runner, param_modes):
 # Opcode 8 is equals: if the first parameter is equal to the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
 
 
-op_lookup = {
-    1: Op(4, takes_param_modes=True, takes_input=False, perform_func=_intcode_add),
-    2: Op(4, takes_param_modes=True, takes_input=False, perform_func=_intcode_multiply),
-    3: Op(2, takes_param_modes=True, takes_input=True, perform_func=_intcode_input),
-    4: Op(2, takes_param_modes=True, takes_input=False, perform_func=_intcode_output),
-    5: Op(0, takes_param_modes=True, takes_input=False, perform_func=_intcode_jump_if_true),
-    6: Op(0, takes_param_modes=True, takes_input=False, perform_func=_intcode_jump_if_false),
-    7: Op(0, takes_param_modes=True, takes_input=False, perform_func=_intcode_less_than),
-    8: Op(0, takes_param_modes=True, takes_input=False, perform_func=_intcode_equals),
-}
+def get_op_by_id(op_id):
+    """Op factory. Provide a new op instance based on the ID passed."""
+    if op_id == 1:
+        return Op(4, takes_param_modes=True, takes_input=False, perform_func=_intcode_add)
+    elif op_id == 2:
+        return Op(4, takes_param_modes=True, takes_input=False, perform_func=_intcode_multiply)
+    elif op_id == 3:
+        return Op(2, takes_param_modes=True, takes_input=True, perform_func=_intcode_input)
+    elif op_id == 4:
+        return Op(2, takes_param_modes=True, takes_input=False, perform_func=_intcode_output)
+    elif op_id == 5:
+        return Op(0, takes_param_modes=True, takes_input=False, perform_func=_intcode_jump_if_true)
+    elif op_id == 6:
+        return Op(0, takes_param_modes=True, takes_input=False, perform_func=_intcode_jump_if_false)
+    elif op_id == 7:
+        return Op(0, takes_param_modes=True, takes_input=False, perform_func=_intcode_less_than)
+    elif op_id == 8:
+        return Op(0, takes_param_modes=True, takes_input=False, perform_func=_intcode_equals)
+    else:
+        raise ValueError(f'Op ID {op_id} is not valid.')
+
+
+
+# op_lookup = {
+#     1: Op(4, takes_param_modes=True, takes_input=False, perform_func=_intcode_add),
+#     2: Op(4, takes_param_modes=True, takes_input=False, perform_func=_intcode_multiply),
+#     3: Op(2, takes_param_modes=True, takes_input=True, perform_func=_intcode_input),
+#     4: Op(2, takes_param_modes=True, takes_input=False, perform_func=_intcode_output),
+#     5: Op(0, takes_param_modes=True, takes_input=False, perform_func=_intcode_jump_if_true),
+#     6: Op(0, takes_param_modes=True, takes_input=False, perform_func=_intcode_jump_if_false),
+#     7: Op(0, takes_param_modes=True, takes_input=False, perform_func=_intcode_less_than),
+#     8: Op(0, takes_param_modes=True, takes_input=False, perform_func=_intcode_equals),
+# }
