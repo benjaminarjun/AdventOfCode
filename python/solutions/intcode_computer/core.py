@@ -1,5 +1,5 @@
 import itertools
-from .ops import get_op_by_id
+from .ops import OpFactory
 
 
 class IntcodeProgramRunner:
@@ -7,6 +7,7 @@ class IntcodeProgramRunner:
         if len(program_list) == 0:
             raise ValueError('Program cannot be empty.')
 
+        self.op_factory = OpFactory()
         self._index = 0
 
         self.original_program = program_list.copy()
@@ -20,14 +21,21 @@ class IntcodeProgramRunner:
         program = list(map(int, program_str.split(',')))
         return cls(program)
 
-    def run(self, input_val=None):
+    def run(self, input_val=None, debug=False):
+        if debug: print(f'Running program: {self.original_program}')
         while self._working_program[self._index] != 99:
+            if debug:
+                print()
+                self.show_program_state()
+
             # Parse op ID and parameter modes
             instruction = self._working_program[self._index]
             op, param_modes = self._parse_instruction(instruction)
             
+            if debug: print(f'Applying {op._perform_func.__name__}')
             output_val = op.perform(self, param_modes, input_val)
-            self._index += op.chunk_length
+            if not op.modified_pointer:
+                self._index += op.chunk_length
             
             # the output becomes input to the next op
             input_val = output_val
@@ -40,10 +48,11 @@ class IntcodeProgramRunner:
         instruction_str = str(instruction)
         op_id = int(instruction_str[-2:])
 
-        op = get_op_by_id(op_id)
-
+        op = self.op_factory.get_op_by_id(op_id)
         param_modes = [int(mode) for mode in list(instruction_str[:-2][::-1])]
-        num_addl_modes = op.chunk_length - 1 - len(param_modes) # length of chunk minus 1 for instruction, less num supplied
+
+        # length of chunk minus 1 for instruction, less num supplied
+        num_addl_modes = op.chunk_length - 1 - len(param_modes)
         param_modes.extend([0] * num_addl_modes)
 
         return op, param_modes
@@ -51,6 +60,20 @@ class IntcodeProgramRunner:
     @property
     def final_program_str(self):
         return self.final_program and ','.join(map(str, self.final_program)) or None
+
+    def show_program_state(self):
+        raw_lh_spacing = (len(str(self._working_program[:self._index + 1])))
+        current_ix_adj = len(str(self._working_program[self._index]))
+
+        lh_spacing = (raw_lh_spacing - current_ix_adj - len('['))
+
+        # Get length of next op.
+        op = self.op_factory.get_op_by_id(self._working_program[self._index])
+
+        print(self._working_program)
+        underscore_len = len(str(self._working_program[self._index: self._index + op.chunk_length - 1]))\
+            - len('[]') + len(str(self._working_program[self._index + op.chunk_length - 1]))
+        print(' ' * lh_spacing + '|' + '_' * underscore_len + '|')
 
 
 # TODO maybe does not belong in core

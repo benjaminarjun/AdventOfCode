@@ -58,6 +58,29 @@ class TestIntCodeComputer(unittest.TestCase):
         runner.run()
         self.assertEqual(expected, runner.final_program_str)
 
+    @parameterized.expand([
+        # Using position mode, consider whether the input is equal to 8; output 1 (if it is) or 0 (if it is not).
+        ['3,9,8,9,10,9,4,9,99,-1,8', 7, 0],
+        ['3,9,8,9,10,9,4,9,99,-1,8', 8, 1],
+        ['3,9,8,9,10,9,4,9,99,-1,8', 9, 0],
+        # Using position mode, consider whether the input is less than 8; output 1 (if it is) or 0 (if it is not).
+        ['3,9,7,9,10,9,4,9,99,-1,8', 7, 1],
+        ['3,9,7,9,10,9,4,9,99,-1,8', 8, 0],
+        ['3,9,7,9,10,9,4,9,99,-1,8', 9, 0],
+        # Using immediate mode, consider whether the input is equal to 8; output 1 (if it is) or 0 (if it is not).
+        ['3,3,1108,-1,8,3,4,3,99', 7, 0],
+        ['3,3,1108,-1,8,3,4,3,99', 8, 1],
+        ['3,3,1108,-1,8,3,4,3,99', 9, 0],
+        # Using immediate mode, consider whether the input is less than 8; output 1 (if it is) or 0 (if it is not).
+        ['3,3,1107,-1,8,3,4,3,99', 7, 1],
+        ['3,3,1107,-1,8,3,4,3,99', 8, 0],
+        ['3,3,1107,-1,8,3,4,3,99', 9, 0],
+    ])
+    def test_day_5_example(self, program, input_val, expected):
+        runner = IntcodeProgramRunner.from_str(program)
+        runner.run(input_val)
+        self.assertEqual(expected, runner.return_code)
+
 
 class TestNounVerbSolver(unittest.TestCase):
     def test_solver(self):
