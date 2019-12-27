@@ -130,25 +130,3 @@ class OpFactory:
 
         op_info = self.ops[op_id]
         return Op(*op_info[1], op_info[0])
-
-
-# def get_op_by_id(op_id):
-#     """Op factory. Provide a new op instance based on the ID passed."""
-#     if op_id == 1:
-#         return Op(4, takes_param_modes=True, takes_input=False, perform_func=_intcode_add)
-#     elif op_id == 2:
-#         return Op(4, takes_param_modes=True, takes_input=False, perform_func=_intcode_multiply)
-#     elif op_id == 3:
-#         return Op(2, takes_param_modes=True, takes_input=True, perform_func=_intcode_input)
-#     elif op_id == 4:
-#         return Op(2, takes_param_modes=True, takes_input=False, perform_func=_intcode_output)
-#     elif op_id == 5:
-#         return Op(3, takes_param_modes=True, takes_input=False, perform_func=_intcode_jump_if_true)
-#     elif op_id == 6:
-#         return Op(3, takes_param_modes=True, takes_input=False, perform_func=_intcode_jump_if_false)
-#     elif op_id == 7:
-#         return Op(4, takes_param_modes=True, takes_input=False, perform_func=_intcode_less_than)
-#     elif op_id == 8:
-#         return Op(4, takes_param_modes=True, takes_input=False, perform_func=_intcode_equals)
-#     else:
-#         raise ValueError(f'Op ID {op_id} is not valid.')
