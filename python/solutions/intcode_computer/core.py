@@ -1,4 +1,3 @@
-import itertools
 from .ops import OpFactory
 
 
@@ -80,34 +79,3 @@ class IntcodeProgramRunner:
         underscore_len = len(str(self._working_program[self._index: self._index + op.chunk_length - 1]))\
             - len('[]') + len(str(self._working_program[self._index + op.chunk_length - 1]))
         print(' ' * lh_spacing + '|' + '_' * underscore_len + '|')
-
-
-# TODO maybe does not belong in core
-def find_noun_and_verb_resulting_in(target_output, program):
-    """Find a noun and verb that result in the specified output for the given program.
-
-    If a solution exists, the first solution encountered will be returned as a tuple.
-    Otherwise, None is returned.
-
-    Parameters
-    ----------
-    target_output : int
-        The desired output value
-    program : str
-        Comma-delimited string representation of the program"""
-
-    found_solution = False
-
-    for noun, verb in itertools.product(range(100), range(100)):
-        program_list = program.split(',')
-        program_list[1:3] = str(noun), str(verb)
-        modified_program = ','.join(program_list)
-
-        runner = IntcodeProgramRunner.from_str(modified_program)
-        runner.run()
-
-        if int(runner.final_program[0]) == target_output:
-            found_solution = True
-            break
-
-    return found_solution and (noun, verb) or None
