@@ -23,6 +23,8 @@ class IntcodeProgramRunner:
 
     def run(self, input_val=None, debug=False):
         if debug: print(f'Running program: {self.original_program}')
+
+        output_val = None
         while self._working_program[self._index] != 99:
             if debug:
                 print()
@@ -32,8 +34,12 @@ class IntcodeProgramRunner:
             instruction = self._working_program[self._index]
             op, param_modes = self._parse_instruction(instruction)
             
-            if debug: print(f'Applying {op._perform_func.__name__}')
-            output_val = op.perform(self, param_modes, input_val)
+            if debug: print(f'Applying {op.__class__.__name__}')
+            this_val = op.perform(self, param_modes, input_val)
+
+            if this_val is not None:
+                output_val = this_val
+
             if not op.modified_pointer:
                 self._index += op.chunk_length
             
@@ -68,7 +74,7 @@ class IntcodeProgramRunner:
         lh_spacing = (raw_lh_spacing - current_ix_adj - len('['))
 
         # Get length of next op.
-        op = self.op_factory.get_op_by_id(self._working_program[self._index])
+        op, _ = self._parse_instruction(self._working_program[self._index])
 
         print(self._working_program)
         underscore_len = len(str(self._working_program[self._index: self._index + op.chunk_length - 1]))\

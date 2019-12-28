@@ -1,5 +1,5 @@
 from ..aoc_helpers import get_data_file
-from ..intcode_computer.core import run_intcode_program
+from ..intcode_computer.core import IntcodeProgramRunner
 
 
 def _get_input_from_file():
@@ -14,5 +14,12 @@ def _get_input_from_file():
 
 if __name__ == '__main__':
     program = _get_input_from_file()[0]
-    _, diagnostic_code = run_intcode_program(program, 1)
-    print(f'Part 1:  {diagnostic_code}')
+
+    runner = IntcodeProgramRunner.from_str(program)
+    runner.run(1)
+
+    print(f'Part 1:  {runner.return_code}')
+
+    part_2_runner = IntcodeProgramRunner.from_str(program)
+    part_2_runner.run(5)
+    print(f'Part 2:  {part_2_runner.return_code}')
