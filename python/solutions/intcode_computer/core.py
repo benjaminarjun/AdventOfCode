@@ -20,7 +20,12 @@ class IntcodeProgramRunner:
         program = list(map(int, program_str.split(',')))
         return cls(program)
 
-    def run(self, input_val=None, debug=False):
+    def run(self, input_vals=None, debug=False):
+        # Allow an int or list to be supplied for input_vals
+        if input_vals is not None and not isinstance(input_vals, list):
+           input_vals = [input_vals]
+        input_index = 0
+
         if debug: print(f'Running program: {self.original_program}')
 
         output_val = None
@@ -34,7 +39,12 @@ class IntcodeProgramRunner:
             op, param_modes = self._parse_instruction(instruction)
             
             if debug: print(f'Applying {op.__class__.__name__}')
-            this_val = op.perform(self, param_modes, input_val)
+
+            if op.takes_input:
+                this_val = op.perform(self, param_modes, input_vals[input_index])
+                input_index += 1
+            else:
+                this_val = op.perform(self, param_modes, input_val=None)
 
             if this_val is not None:
                 output_val = this_val
