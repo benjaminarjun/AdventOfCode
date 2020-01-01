@@ -46,6 +46,17 @@ class TestIntCodeComputer(unittest.TestCase):
         runner.run(77)
         self.assertEqual(expected_output, runner.return_code)
 
+    def test_return_at_first_output(self):
+        program = '4,1,3,0,4,5,99'
+
+        run_all_runner = IntcodeProgramRunner.from_str(program)
+        run_all_runner.run(42)
+        self.assertEqual(5, run_all_runner.return_code)
+
+        pause_at_first_output_runner = IntcodeProgramRunner.from_str(program, pause_at_first_output=True)
+        pause_at_first_output_runner.run(42)
+        self.assertEqual(1, pause_at_first_output_runner.return_code)
+
     @parameterized.expand([
         ['1,9,10,3,2,3,11,0,99,30,40,50', '3500,9,10,70,2,3,11,0,99,30,40,50'],
         ['1,0,0,0,99', '2,0,0,0,99'],

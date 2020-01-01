@@ -2,7 +2,7 @@ from .ops import OpFactory
 
 
 class IntcodeProgramRunner:
-    def __init__(self, program_list):
+    def __init__(self, program_list, pause_at_first_output=False):
         if len(program_list) == 0:
             raise ValueError('Program cannot be empty.')
 
@@ -12,13 +12,15 @@ class IntcodeProgramRunner:
         self.original_program = program_list.copy()
         self._working_program = program_list.copy()
 
+        self.pause_at_first_output = pause_at_first_output
+
         self.final_program = None
         self.return_code = None
     
     @classmethod
-    def from_str(cls, program_str):
+    def from_str(cls, program_str, pause_at_first_output=False):
         program = list(map(int, program_str.split(',')))
-        return cls(program)
+        return cls(program, pause_at_first_output)
 
     def run(self, input_vals=None, debug=False):
         # Allow an int or list to be supplied for input_vals
@@ -51,9 +53,12 @@ class IntcodeProgramRunner:
 
             if not op.modified_pointer:
                 self._index += op.chunk_length
-            
+
             # the output becomes input to the next op
             input_val = output_val
+
+            if self.pause_at_first_output:
+                break
 
         self.final_program = self._working_program.copy()
         self.return_code = output_val
