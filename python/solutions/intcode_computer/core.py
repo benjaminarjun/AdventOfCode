@@ -19,6 +19,8 @@ class IntcodeProgramRunner:
 
         self.final_program = None
         self.return_code = None
+
+        self._output_val = None
     
     @classmethod
     def from_str(cls, program_str, pause_at_first_output=False):
@@ -26,6 +28,8 @@ class IntcodeProgramRunner:
         return cls(program, pause_at_first_output)
 
     def run(self, input_vals=None, debug=False):
+        if self.run_state == RunnerState.Complete:
+            raise ValueError('Attempted to run an IntcodeProgramRunner that had already completed')
         self.run_state = RunnerState.Running
 
         # Allow an int or list to be supplied for input_vals
@@ -35,7 +39,6 @@ class IntcodeProgramRunner:
 
         if debug: print(f'Running program: {self.original_program}')
 
-        output_val = None
         while self._current_instruction != 99:
             if debug:
                 print()
@@ -52,24 +55,23 @@ class IntcodeProgramRunner:
             else:
                 this_val = op.perform(self, param_modes, input_val=None)
 
-            if this_val is not None:
-                output_val = this_val
-
             if not op.modified_pointer:
                 self._index += op.chunk_length
 
-            if self.pause_at_first_output:
-                break
+            if this_val is not None:
+                self._output_val = this_val
 
-        self.final_program = self._working_program.copy()
-        self.return_code = output_val
+            if self.pause_at_first_output and this_val is not None:
+                break
 
         if self._current_instruction == 99:
             self.run_state = RunnerState.Complete
+            self.final_program = self._working_program.copy()
+            self.return_code = self._output_val
         else:
             self.run_state = RunnerState.Paused
 
-        return output_val
+        return self._output_val
 
     def _parse_instruction(self, instruction):
         instruction_str = str(instruction)

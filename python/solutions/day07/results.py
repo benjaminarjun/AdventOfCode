@@ -14,5 +14,8 @@ def _get_input_from_file():
 if __name__ == '__main__':
     program = _get_input_from_file()
 
-    max_output, _ = get_max_pipeline_output(program)
+    max_output, _ = get_max_pipeline_output(program, False)
     print(f'Part 1:  {max_output}')
+
+    new_max_output, _ = get_max_pipeline_output(program, True)
+    print(f'Part 2:  {new_max_output}')
