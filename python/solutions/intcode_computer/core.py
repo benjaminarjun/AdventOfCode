@@ -54,9 +54,6 @@ class IntcodeProgramRunner:
             if not op.modified_pointer:
                 self._index += op.chunk_length
 
-            # the output becomes input to the next op
-            input_val = output_val
-
             if self.pause_at_first_output:
                 break
 
