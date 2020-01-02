@@ -114,3 +114,24 @@ class TestIntCodeComputer(unittest.TestCase):
         runner = IntcodeProgramRunner.from_str(program)
         runner.run(input_val)
         self.assertEqual(expected, runner.return_code)
+
+    # def test_relative_mode_example_1(self):
+    #     program = '109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99'
+    #     runner = IntcodeProgramRunner.from_str(program)
+    #     runner.run()
+
+    #     self.assertEqual(program, runner.final_program)
+
+    # def test_relative_mode_example_2(self):
+    #     program = '1102,34915192,34915192,7,4,7,99,0'
+    #     runner = IntcodeProgramRunner.from_str(program)
+    #     runner.run()
+
+    #     self.assertEqual(16, len(str(runner.return_code)))
+
+    # def test_relative_mode_example_3(self):
+    #     program = '104,1125899906842624,99'
+    #     runner = IntcodeProgramRunner.from_str(program)
+    #     runner.run()
+
+    #     self.assertEqual(1125899906842624, runner.return_code)

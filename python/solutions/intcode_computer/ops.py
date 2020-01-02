@@ -26,11 +26,12 @@ class Op:
             read_from_ix = index + i + 1
 
             if mode == 0:
-                val = program[program[read_from_ix]]
+                ix = program_runner._get_working_program_val(read_from_ix)
+                val = program_runner._get_working_program_val(ix)
             elif mode == 1:
-                val = program[read_from_ix]
+                val = program_runner._get_working_program_val(read_from_ix)
             elif mode == 2:
-                val = program[program_runner._relative_base + read_from_ix]
+                val = program_runner._get_working_program_val(program_runner._relative_base + read_from_ix)
             else:
                 raise ValueError(f'Encountered unknown param mode {mode} in program {program} at index {index}')
 
@@ -48,8 +49,8 @@ class Add(Op):
 
     def _perform(self, program_runner, param_modes):
         program, index, lh_val, rh_val, _ = self._get_instruction_context(program_runner, param_modes)
-        program[program[index + 3]] = lh_val + rh_val
-
+        program_runner._set_working_program_val(index + 3, lh_val + rh_val)
+        
 
 class Multiply(Op):
     def __init__(self):
@@ -57,7 +58,7 @@ class Multiply(Op):
 
     def _perform(self, program_runner, param_modes):
         program, index, lh_val, rh_val, _ = self._get_instruction_context(program_runner, param_modes)
-        program[program[index + 3]] = lh_val * rh_val
+        program_runner._set_working_program_val(index + 3, lh_val * rh_val)
 
 
 class Input(Op):
@@ -71,7 +72,7 @@ class Input(Op):
         program = program_runner._working_program
         index = program_runner._index
 
-        program[program[index + 1]] = input_val
+        program_runner._set_working_program_val(index + 1, input_val)
 
 
 class Output(Op):
@@ -118,8 +119,7 @@ class LessThan(Op):
 
     def _perform(self, program_runner, param_modes):
         program, index, lh_val, rh_val, _ = self._get_instruction_context(program_runner, param_modes)
-        program[program[index + 3]] = lh_val < rh_val and 1 or 0
-
+        program_runner._set_working_program_val(index + 3, lh_val < rh_val and 1 or 0)
 
 class Equals(Op):
     def __init__(self):
@@ -127,7 +127,7 @@ class Equals(Op):
 
     def _perform(self, program_runner, param_modes):
         program, index, lh_val, rh_val, _ = self._get_instruction_context(program_runner, param_modes)
-        program[program[index + 3]] = lh_val == rh_val and 1 or 0
+        program_runner._set_working_program_val(index + 3, lh_val == rh_val and 1 or 0)
 
 
 class AdjustRelativeBase(Op):

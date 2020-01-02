@@ -87,6 +87,23 @@ class IntcodeProgramRunner:
 
         return op, param_modes
 
+    def _get_working_program_val(self, index):
+        if index < 0:
+            raise ValueError(f'Index must be non-negative; value supplied was {index}')
+
+        self._pad_working_program_to_length(index + 1)
+        return self._working_program[index]
+
+    def _set_working_program_val(self, index, value):
+        # Assignments are always by position mode, so that's what this method does.
+        self._pad_working_program_to_length(index + 1)
+        new_ix = self._get_working_program_val(index)
+        self._working_program[new_ix] = value
+
+    def _pad_working_program_to_length(self, length):
+        if length > len(self._working_program):
+            self._working_program += [0] * (length - len(self._working_program))
+
     @property
     def _current_instruction(self):
         return self._working_program[self._index]
