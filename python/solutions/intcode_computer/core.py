@@ -1,3 +1,4 @@
+from enum import Enum
 from .ops import OpFactory
 
 
@@ -5,6 +6,8 @@ class IntcodeProgramRunner:
     def __init__(self, program_list, pause_at_first_output=False):
         if len(program_list) == 0:
             raise ValueError('Program cannot be empty.')
+
+        self.run_state = RunnerState.New
 
         self.op_factory = OpFactory()
         self._index = 0
@@ -23,6 +26,8 @@ class IntcodeProgramRunner:
         return cls(program, pause_at_first_output)
 
     def run(self, input_vals=None, debug=False):
+        self.run_state = RunnerState.Running
+
         # Allow an int or list to be supplied for input_vals
         if input_vals is not None and not isinstance(input_vals, list):
            input_vals = [input_vals]
@@ -31,14 +36,13 @@ class IntcodeProgramRunner:
         if debug: print(f'Running program: {self.original_program}')
 
         output_val = None
-        while self._working_program[self._index] != 99:
+        while self._current_instruction != 99:
             if debug:
                 print()
                 self.show_program_state()
 
             # Parse op ID and parameter modes
-            instruction = self._working_program[self._index]
-            op, param_modes = self._parse_instruction(instruction)
+            op, param_modes = self._parse_instruction(self._current_instruction)
             
             if debug: print(f'Applying {op.__class__.__name__}')
 
@@ -59,6 +63,12 @@ class IntcodeProgramRunner:
 
         self.final_program = self._working_program.copy()
         self.return_code = output_val
+
+        if self._current_instruction == 99:
+            self.run_state = RunnerState.Complete
+        else:
+            self.run_state = RunnerState.Paused
+
         return output_val
 
     def _parse_instruction(self, instruction):
@@ -73,6 +83,10 @@ class IntcodeProgramRunner:
         param_modes.extend([0] * num_addl_modes)
 
         return op, param_modes
+
+    @property
+    def _current_instruction(self):
+        return self._working_program[self._index]
 
     @property
     def final_program_str(self):
@@ -91,3 +105,10 @@ class IntcodeProgramRunner:
         underscore_len = len(str(self._working_program[self._index: self._index + op.chunk_length - 1]))\
             - len('[]') + len(str(self._working_program[self._index + op.chunk_length - 1]))
         print(' ' * lh_spacing + '|' + '_' * underscore_len + '|')
+
+
+class RunnerState(Enum):
+    New = 1
+    Running = 2
+    Paused = 3
+    Complete = 4
