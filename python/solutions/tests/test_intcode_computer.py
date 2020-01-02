@@ -54,8 +54,8 @@ class TestIntCodeComputer(unittest.TestCase):
         self.assertEqual(5, run_all_runner.return_code)
 
         pause_at_first_output_runner = IntcodeProgramRunner.from_str(program, pause_at_first_output=True)
-        pause_at_first_output_runner.run(42)
-        self.assertEqual(1, pause_at_first_output_runner.return_code)
+        result = pause_at_first_output_runner.run(42)
+        self.assertEqual(1, result)
 
     @parameterized.expand([
         ['1,9,10,3,2,3,11,0,99,30,40,50', '3500,9,10,70,2,3,11,0,99,30,40,50'],
