@@ -15,6 +15,29 @@ class Op:
 
         return self._perform(*params)
 
+    def _get_instruction_context(self, program_runner, param_modes):
+        values = []
+
+        program = program_runner._working_program
+        index = program_runner._index
+
+        for i, mode in enumerate(param_modes):
+            # Add 1 so we skip over the instruction element.
+            read_from_ix = index + i + 1
+
+            if mode == 0:
+                val = program[program[read_from_ix]]
+            elif mode == 1:
+                val = program[read_from_ix]
+            elif mode == 2:
+                val = program[program_runner._relative_base + read_from_ix]
+            else:
+                raise ValueError(f'Encountered unknown param mode {mode} in program {program} at index {index}')
+
+            values.append(val)
+
+        return (program, index, *values)
+
     def __repr__(self):
         return f'<{self.__class__.__name__}(chunk_length={self.chunk_length})>'
 
@@ -24,13 +47,7 @@ class Add(Op):
         super().__init__(4, True, False)
 
     def _perform(self, program_runner, param_modes):
-        program = program_runner._working_program
-        index = program_runner._index
-
-        lh_val_mode, rh_val_mode, _ = param_modes
-        lh_val = program[index + 1] if lh_val_mode == 1 else program[program[index + 1]]
-        rh_val = program[index + 2] if rh_val_mode == 1 else program[program[index + 2]]
-
+        program, index, lh_val, rh_val, _ = self._get_instruction_context(program_runner, param_modes)
         program[program[index + 3]] = lh_val + rh_val
 
 
@@ -39,13 +56,7 @@ class Multiply(Op):
         super().__init__(4, True, False)
 
     def _perform(self, program_runner, param_modes):
-        program = program_runner._working_program
-        index = program_runner._index
-
-        lh_val_mode, rh_val_mode, _ = param_modes
-        lh_val = program[index + 1] if lh_val_mode == 1 else program[program[index + 1]]
-        rh_val = program[index + 2] if rh_val_mode == 1 else program[program[index + 2]]
-
+        program, index, lh_val, rh_val, _ = self._get_instruction_context(program_runner, param_modes)
         program[program[index + 3]] = lh_val * rh_val
 
 
@@ -82,12 +93,7 @@ class JumpIfTrue(Op):
         super().__init__(3, True, False)
 
     def _perform(self, program_runner, param_modes):
-        program = program_runner._working_program
-        index = program_runner._index
-
-        mode_1, mode_2 = param_modes
-        jump_ind = program[index + 1] if mode_1 == 1 else program[program[index + 1]]
-        jump_loc = program[index + 2] if mode_2 == 1 else program[program[index + 2]]
+        program, index, jump_ind, jump_loc = self._get_instruction_context(program_runner, param_modes)
 
         if jump_ind != 0:
             program_runner._index = jump_loc
@@ -99,12 +105,7 @@ class JumpIfFalse(Op):
         super().__init__(3, True, False)
 
     def _perform(self, program_runner, param_modes):
-        program = program_runner._working_program
-        index = program_runner._index
-
-        mode_1, mode_2 = param_modes
-        jump_ind = program[index + 1] if mode_1 == 1 else program[program[index + 1]]
-        jump_loc = program[index + 2] if mode_2 == 1 else program[program[index + 2]]
+        program, index, jump_ind, jump_loc = self._get_instruction_context(program_runner, param_modes)
 
         if jump_ind == 0:
             program_runner._index = jump_loc
@@ -116,13 +117,7 @@ class LessThan(Op):
         super().__init__(4, True, False)
 
     def _perform(self, program_runner, param_modes):
-        program = program_runner._working_program
-        index = program_runner._index
-
-        mode_1, mode_2, _ = param_modes
-        lh_val = program[index + 1] if mode_1 == 1 else program[program[index + 1]]
-        rh_val = program[index + 2] if mode_2 == 1 else program[program[index + 2]]
-
+        program, index, lh_val, rh_val, _ = self._get_instruction_context(program_runner, param_modes)
         program[program[index + 3]] = lh_val < rh_val and 1 or 0
 
 
@@ -131,14 +126,22 @@ class Equals(Op):
         super().__init__(4, True, False)
 
     def _perform(self, program_runner, param_modes):
+        program, index, lh_val, rh_val, _ = self._get_instruction_context(program_runner, param_modes)
+        program[program[index + 3]] = lh_val == rh_val and 1 or 0
+
+
+class AdjustRelativeBase(Op):
+    def __init__(self):
+        super().__init__(2, True, False)
+
+    def _perform(self, program_runner, param_modes):
         program = program_runner._working_program
         index = program_runner._index
 
-        mode_1, mode_2, _ = param_modes
-        lh_val = program[index + 1] if mode_1 == 1 else program[program[index + 1]]
-        rh_val = program[index + 2] if mode_2 == 1 else program[program[index + 2]]
+        (mode_1, ) = param_modes
+        adjustment_amt = program[index + 1] if mode_1 == 1 else program[program[index + 1]]
 
-        program[program[index + 3]] = lh_val == rh_val and 1 or 0
+        program_runner._relative_base += adjustment_amt
 
 
 class OpFactory:
@@ -152,6 +155,7 @@ class OpFactory:
             6: JumpIfFalse,
             7: LessThan,
             8: Equals,
+            9: AdjustRelativeBase,
         }
 
     def get_op_by_id(self, op_id):

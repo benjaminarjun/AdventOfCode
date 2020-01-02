@@ -11,6 +11,7 @@ class IntcodeProgramRunner:
 
         self.op_factory = OpFactory()
         self._index = 0
+        self._relative_base = 0
 
         self.original_program = program_list.copy()
         self._working_program = program_list.copy()
