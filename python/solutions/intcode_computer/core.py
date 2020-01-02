@@ -96,10 +96,8 @@ class IntcodeProgramRunner:
         return self._working_program[index]
 
     def _set_working_program_val(self, index, value):
-        # Assignments are always by position mode, so that's what this method does.
         self._pad_working_program_to_length(index + 1)
-        new_ix = self._get_working_program_val(index)
-        self._working_program[new_ix] = value
+        self._working_program[index] = value
 
     def _pad_working_program_to_length(self, length):
         if length > len(self._working_program):

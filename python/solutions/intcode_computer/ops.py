@@ -39,6 +39,20 @@ class Op:
 
         return (program, index, *values)
 
+
+    def _write_to_program_by_mode(self, program_runner, mode, index, value):
+        if isinstance(mode, str):
+            mode = int(mode)
+
+        if mode == 0:
+            write_to_index = program_runner._get_working_program_val(index)
+        elif mode == 2:
+            write_to_index = program_runner._get_working_program_val(program_runner._relative_base + index)
+        else:
+            raise ValueError(f'mode param got value of {mode}; must be one of: 0, 2')
+
+        program_runner._working_program[write_to_index] = value
+
     def __repr__(self):
         return f'<{self.__class__.__name__}(chunk_length={self.chunk_length})>'
 
@@ -48,9 +62,8 @@ class Add(Op):
         super().__init__(4, True, False)
 
     def _perform(self, program_runner, param_modes):
-        program, index, lh_val, rh_val, _ = self._get_instruction_context(program_runner, param_modes)
-        program_runner._set_working_program_val(index + 3, lh_val + rh_val)
-        
+        program, index, lh_val, rh_val, write_ix = self._get_instruction_context(program_runner, param_modes)
+        self._write_to_program_by_mode(program_runner, param_modes[-1], index + 3, lh_val + rh_val)
 
 class Multiply(Op):
     def __init__(self):
@@ -58,7 +71,7 @@ class Multiply(Op):
 
     def _perform(self, program_runner, param_modes):
         program, index, lh_val, rh_val, _ = self._get_instruction_context(program_runner, param_modes)
-        program_runner._set_working_program_val(index + 3, lh_val * rh_val)
+        self._write_to_program_by_mode(program_runner, param_modes[-1], index + 3, lh_val * rh_val)
 
 
 class Input(Op):
@@ -67,12 +80,12 @@ class Input(Op):
 
     def _perform(self, program_runner, param_modes, input_val):
         if input_val is None:
-            raise ValueError('Input to _intcode_input cannot be None.')
+            raise ValueError('Input to the Input op cannot be None.')
 
         program = program_runner._working_program
         index = program_runner._index
 
-        program_runner._set_working_program_val(index + 1, input_val)
+        self._write_to_program_by_mode(program_runner, param_modes[-1], index + 1, input_val)
 
 
 class Output(Op):
@@ -80,12 +93,7 @@ class Output(Op):
         super().__init__(2, True, False)
 
     def _perform(self, program_runner, param_modes):
-        program = program_runner._working_program
-        index = program_runner._index
-
-        (mode, ) = param_modes
-        output_val = program[index + 1] if mode == 1 else program[program[index + 1]]
-
+        _, _, output_val = self._get_instruction_context(program_runner, param_modes)
         return output_val
 
 
@@ -119,7 +127,7 @@ class LessThan(Op):
 
     def _perform(self, program_runner, param_modes):
         program, index, lh_val, rh_val, _ = self._get_instruction_context(program_runner, param_modes)
-        program_runner._set_working_program_val(index + 3, lh_val < rh_val and 1 or 0)
+        self._write_to_program_by_mode(program_runner, param_modes[-1], index + 3, lh_val < rh_val and 1 or 0)
 
 
 class Equals(Op):
@@ -128,7 +136,7 @@ class Equals(Op):
 
     def _perform(self, program_runner, param_modes):
         program, index, lh_val, rh_val, _ = self._get_instruction_context(program_runner, param_modes)
-        program_runner._set_working_program_val(index + 3, lh_val == rh_val and 1 or 0)
+        self._write_to_program_by_mode(program_runner, param_modes[-1], index + 3, lh_val == rh_val and 1 or 0)
 
 
 class AdjustRelativeBase(Op):
