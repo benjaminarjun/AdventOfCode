@@ -67,7 +67,8 @@ class IntcodeProgramRunner:
 
         if self._current_instruction == 99:
             self.run_state = RunnerState.Complete
-            self.final_program = self._working_program.copy()
+            # Chop off all the extra memory we added.
+            self.final_program = self._working_program[:len(self.original_program)].copy()
             self.return_code = self._output_val
         else:
             self.run_state = RunnerState.Paused

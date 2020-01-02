@@ -121,6 +121,7 @@ class LessThan(Op):
         program, index, lh_val, rh_val, _ = self._get_instruction_context(program_runner, param_modes)
         program_runner._set_working_program_val(index + 3, lh_val < rh_val and 1 or 0)
 
+
 class Equals(Op):
     def __init__(self):
         super().__init__(4, True, False)
@@ -135,12 +136,7 @@ class AdjustRelativeBase(Op):
         super().__init__(2, True, False)
 
     def _perform(self, program_runner, param_modes):
-        program = program_runner._working_program
-        index = program_runner._index
-
-        (mode_1, ) = param_modes
-        adjustment_amt = program[index + 1] if mode_1 == 1 else program[program[index + 1]]
-
+        program, index, adjustment_amt = self._get_instruction_context(program_runner, param_modes)
         program_runner._relative_base += adjustment_amt
 
 
