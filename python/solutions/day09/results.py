@@ -17,3 +17,8 @@ if __name__ == '__main__':
     boost_keycode = runner.run(1)
 
     print(f'Part 1:  {boost_keycode} {runner.run_state}')
+
+    part_2_runner = IntcodeProgramRunner.from_str(input_data)
+    distress_signal_coordinates = part_2_runner.run(2)
+
+    print(f'Part 1:  {distress_signal_coordinates} {part_2_runner.run_state}')
