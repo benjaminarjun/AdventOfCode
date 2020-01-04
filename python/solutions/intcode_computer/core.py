@@ -4,6 +4,9 @@ from .ops import OpFactory
 
 class IntcodeProgramRunner:
     def __init__(self, program_list, pause_at_first_output=False):
+        if isinstance(program_list, str):
+            raise ValueError(f'{self.__class__.__name__} constructor expects a list; use from_str() instead')
+
         if len(program_list) == 0:
             raise ValueError('Program cannot be empty.')
 

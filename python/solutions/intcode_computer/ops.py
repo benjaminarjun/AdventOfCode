@@ -31,7 +31,8 @@ class Op:
             elif mode == 1:
                 val = program_runner._get_working_program_val(read_from_ix)
             elif mode == 2:
-                val = program_runner._get_working_program_val(program_runner._relative_base + read_from_ix)
+                ix = program_runner._get_working_program_val(read_from_ix) + program_runner._relative_base
+                val = program_runner._get_working_program_val(ix)
             else:
                 raise ValueError(f'Encountered unknown param mode {mode} in program {program} at index {index}')
 
@@ -47,7 +48,7 @@ class Op:
         if mode == 0:
             write_to_index = program_runner._get_working_program_val(index)
         elif mode == 2:
-            write_to_index = program_runner._get_working_program_val(program_runner._relative_base + index)
+            write_to_index = program_runner._get_working_program_val(index) + program_runner._relative_base
         else:
             raise ValueError(f'mode param got value of {mode}; must be one of: 0, 2')
 
